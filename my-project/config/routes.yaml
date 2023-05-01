@@ -1,0 +1,10 @@
+pizza_index:
+    path: /pizzas
+    controller: App\Controller\PizzaController::index
+    options:
+        expose: true
+index:
+    path: /
+    controller: App\Controller\PizzaController::index
+    options:
+        expose: true

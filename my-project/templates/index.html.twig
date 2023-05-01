@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+    <div class="container text-center">
+        <img src="{{ asset('img/PizzeriaPizzana.png') }}" alt="Descripción de la imagen" width="300">
+        <h1 style="margin-top: 35px; text-align: center; font-size: 3em; font-weight: bold; color: #555; font-family: Arial">Pizzas</h1
+    {{ form_start(form) }}
+    {{ form_widget(form.pizza) }}
+    {{ form_widget(form.submit) }}
+    {{ form_end(form) }}
+
+
+    {% if selectedPizza %}
+        <div style="margin-top: 30px;">
+
+            <h2 style="font-family: Arial, sans-serif; font-size: 32px; font-weight: bold; text-align: center; margin-top: 20px;">{{ selectedPizza.getNamePizza() }}</h2>
+            <hr>
+            <!-- <p>Precio total: {#{{ pizzaIngredients[selectedPizza.getId()]['total_price'] }#}</p> -->
+            <p>Ingredients:</p>
+            <ul>
+                {% for ingredient in pizzaIngredients[selectedPizza.getId()]['ingredients'] %}
+                    <li>{{ ingredient.getNameIngredient() }}</li>
+                {% endfor %}
+            </ul>
+            {% set total_price = 0 %}
+            {% for ingredient in selectedPizza.getPizzaIngredient() %}
+                {% set total_price = total_price + ingredient.getPrice() %}
+
+            {% endfor %}
+
+
+            {% if ingredientForm %}
+                <h3>Additional ingredients:</h3>
+                {% for ingredient in allIngredients %}
+                    <li>
+                        {% if selectedPizza.hasIngredient(ingredient) %}
+                            <input type="checkbox" name="ingredients[]" value="{{ ingredient.getId() }}" data-price="{{ ingredient.getPrice() }}" checked>
+                        {% else %}
+                            <input type="checkbox" name="ingredients[]" value="{{ ingredient.getId() }}" data-price="{{ ingredient.getPrice() }}">
+                        {% endif %}
+                        {{ ingredient.getNameIngredient() }} ({{ ingredient.getPrice() }}€)
+                    </li>
+                {% endfor %}
+
+
+            <!-- Pongo aquí el script para no tener jaleo innecesario con el yarn, ya que solo es sumar y restar -->
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+                $(function() {
+                    // Manejo la selección de ingredientes
+                    $('input[type="checkbox"]').change(function() {
+                        var price = parseFloat($(this).data('price'));
+                        var total = parseFloat($('#preciototal').text().replace('TOTAL = ', '').replace(' €', ''));
+                        if ($(this).is(':checked')) {
+                            total += price;
+                        } else {
+                            total -= price;
+                        }
+
+                        $('#preciototal').text('TOTAL = ' + total.toFixed(2) + '€');
+                    });
+                });
+            </script>
+            {% endif %}
+
+            <p id="preciototal" style="margin-top: 30px; font-size: 30px; font-weight: bold; color: green;">TOTAL = {{ (total_price *0.5) + total_price|number_format(2, '.', ',') }}  €</p>
+
+        </div>
+    {% endif %}
+</div>
+
+
+
+{% endblock %}

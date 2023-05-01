@@ -1,0 +1,10 @@
+{
+  "entrypoints": {
+    "invoice": {
+      "js": [
+        "/build/runtime.js",
+        "/build/invoice.js"
+      ]
+    }
+  }
+}
